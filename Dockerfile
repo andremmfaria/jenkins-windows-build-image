@@ -1,5 +1,5 @@
-FROM nexus.bancopan.com.br:5000/dotnet/framework/runtime:4.8-windowsservercore-ltsc2019
-LABEL MAINTAINER="Andre Faria <andre.faria@grupopan.com>"
+FROM mcr.microsoft.com/dotnet/framework/runtime:4.8-windowsservercore-ltsc2019
+LABEL MAINTAINER="Andre Faria <andremarcalfaria@gmail.com>"
 
 # Install chocolatey
 RUN powershell -Command \ 
