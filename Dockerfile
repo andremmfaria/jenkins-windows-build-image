@@ -1,6 +1,9 @@
 FROM mcr.microsoft.com/dotnet/framework/runtime:4.8-windowsservercore-ltsc2019
 LABEL MAINTAINER="Andre Faria <andremarcalfaria@gmail.com>"
 
+# Change default shell to CMD
+SHELL ["cmd", "/S", "/C"]
+
 # Install chocolatey
 RUN powershell -Command \ 
     Set-ExecutionPolicy Bypass -Scope Process -Force ; \
@@ -23,11 +26,7 @@ RUN powershell -Command \
     .\FixHostFilePermissions.ps1 -Confirm:$false ; \
     .\FixUserFilePermissions.ps1 -Confirm:$false ; \
     .\install-sshd.ps1 ; \
-    Set-Service -Name  sshd -StartupType Automatic ; \
-    Start-Service -Name sshd ; \
     Set-Location -Path \"$previousPath\" ; \
-    New-ItemProperty -Path \"HKLM:\SOFTWARE\OpenSSH\" -Name DefaultShellCommandOption -Value \"/c\" -PropertyType String -Force  >> temp ; \
-    New-ItemProperty -Path \"HKLM:\SOFTWARE\OpenSSH\" -Name DefaultShell -Value \"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe\" -PropertyType String -Force >> temp 
     
 # Copy entrypoint script
 COPY ./entrypoint.ps1 .

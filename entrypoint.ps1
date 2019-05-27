@@ -2,8 +2,8 @@ $LogName = "OpenSSH/Operational"
 $ShowExisting = 10
 $hostAddr = "tcp://$((Get-NetIPConfiguration).IPv4DefaultGateway.NextHop.ToString()):2375"
 
-New-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Session Manager\Environment" -Name "DOCKER_HOST" -Value $hostAddr -PropertyType String -Force
-Restart-Service -Name sshd -Force 
+setx.exe DOCKER_HOST "$hostAddr" /M
+sc.exe start sshd 
 
 if ($ShowExisting -gt 0) {
     $Data = Get-WinEvent -LogName $LogName -MaxEvents $ShowExisting -ErrorAction Continue
@@ -22,3 +22,4 @@ while ($true) {
     }
     $Index1 = $Index2
 }
+
