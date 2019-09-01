@@ -26,8 +26,19 @@ RUN powershell -Command \
     .\FixHostFilePermissions.ps1 -Confirm:$false ; \
     .\FixUserFilePermissions.ps1 -Confirm:$false ; \
     .\install-sshd.ps1 ; \
-    Set-Location -Path \"$previousPath\" ; \
-    
+    Set-Location -Path \"$previousPath\"
+
+# Install sonar scanner
+RUN powershell -Command \
+    $sonarScannerVersion=\"4.6.2.2108\" ; \
+    $sonarScannerInstallPath=\"C:\sonar-scanner\" ; \
+    New-Item -Path $sonarScannerInstallPath -ItemType Directory ; \
+    Invoke-WebRequest -UseBasicParsing -Uri \"https://github.com/SonarSource/sonar-scanner-msbuild/releases/download/${sonarScannerVersion}/sonar-scanner-msbuild-${sonarScannerVersion}-net46.zip\" -OutFile \"${sonarScannerInstallPath}\sonar-scanner.zip\" ; \
+    Expand-Archive -Path \"${sonarScannerInstallPath}\sonar-scanner.zip\" -DestinationPath $sonarScannerInstallPath -Force ; \
+    Remove-Item -Path \"${sonarScannerInstallPath}\sonar-scanner.zip\" -Force ; \
+    $path = [System.Environment]::GetEnvironmentVariable(\"PATH\", \"Machine\") ; \
+    [System.Environment]::SetEnvironmentVariable(\"PATH\", $path + \";$sonarScannerInstallPath;\", \"Machine\")
+
 # Copy entrypoint script
 COPY ./entrypoint.ps1 .
 
